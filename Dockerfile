@@ -16,4 +16,4 @@ COPY . .
 
 # Start the application
 EXPOSE 3000
-CMD ["pnpm", "start"]
+CMD ["node", "src/bot.js"]
