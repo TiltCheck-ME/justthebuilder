@@ -126,6 +126,8 @@ export async function applyBlueprint(guild, blueprint, { ownerUser, mode = "full
         polishAppliedAt: nowIso,
         structureAppliedAt: cfg.structureAppliedAt || nowIso
       });
+      const { grantTicketSupport } = await import("./tickets/access.js");
+      grantTicketSupport(guild.id);
     }
   } catch (err) {
     log(`Guild config patch failed: ${err.message}`);

@@ -90,7 +90,11 @@ export const SetupCommandData = {
     {
       type: 1,
       name: "ticket-panel",
-      description: "Post the support ticket category menu in #create-ticket"
+      description: "Post the support ticket menu (defaults to #create-ticket)",
+      options: [
+        { type: 7, name: "channel", description: "Channel to post the ticket menu in", required: false },
+        { type: 8, name: "staff-role", description: "Role that sees and gets pinged on tickets", required: false }
+      ]
     },
     {
       type: 1,
@@ -578,14 +582,13 @@ export async function handleSetupInteraction(interaction, client) {
       await interaction.followUp({ ephemeral: true, content: `❌ Failed: ${err.message}` });
     }
   } else if (sub === "ticket-panel") {
-    const access = await canApplyPolish(interaction, interaction.guild);
-    const polished = guildHasPolishApplied(interaction.guild.id);
-    if (!access.allowed && !polished && !isBotOwner(interaction.user.id)) {
-      return interaction.reply({
-        ephemeral: true,
-        content: "💎 That command needs a completed full unlock ($0.99 pack) on this server.",
-      });
+    const { ticketAccess, ticketDeniedMessage } = await import("../tickets/access.js");
+    const tAccess = ticketAccess(interaction.guild);
+    if (!tAccess.allowed && !isBotOwner(interaction.user.id)) {
+      return interaction.reply({ ephemeral: true, content: ticketDeniedMessage(tAccess) });
     }
+    const panelChannelOpt = interaction.options.getChannel("channel");
+    const staffRoleOpt = interaction.options.getRole("staff-role");
 
     await interaction.reply({ ephemeral: true, content: "Posting support ticket panel…" });
     try {
@@ -606,6 +609,14 @@ export async function handleSetupInteraction(interaction, client) {
           ["", "", "", "", "", "", "Admin, Moderator", "", "", "yes", ""],
           (await import("../ai/interviewConfig.js")).A
         );
+        saveTicketConfig(interaction.guild.id, config, null);
+      }
+      if (panelChannelOpt || staffRoleOpt) {
+        config = {
+          ...config,
+          ...(panelChannelOpt ? { panelChannelId: panelChannelOpt.id, panelChannel: panelChannelOpt.name } : {}),
+          ...(staffRoleOpt ? { staffRoleIds: [staffRoleOpt.id], staffRoles: [staffRoleOpt.name] } : {})
+        };
         saveTicketConfig(interaction.guild.id, config, null);
       }
       const ok = config?.enabled && (await deployTicketPanelInGuild(interaction.guild, client));

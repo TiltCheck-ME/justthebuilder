@@ -11,6 +11,7 @@ import fs from "fs";
 import path from "path";
 import { log } from "../logger.js";
 import { getTicketConfig } from "./config.js";
+import { ticketAccess, ticketDeniedMessage } from "./access.js";
 
 const SELECT_ID = "jtb_ticket_category";
 const CLOSE_ID = "jtb_ticket_close";
@@ -35,8 +36,10 @@ function saveTicketState(guildId, state) {
   fs.writeFileSync(ticketsPath(guildId), JSON.stringify(state, null, 2));
 }
 
-function resolveStaffRoleIds(guild, staffRoleNames = []) {
+function resolveStaffRoleIds(guild, staffRoleNames = [], staffRoleIds = []) {
   const ids = new Set();
+  for (const id of staffRoleIds || []) if (guild.roles.cache.has(id)) ids.add(id);
+  if (ids.size) return [...ids];
   for (const name of staffRoleNames) {
     const role = guild.roles.cache.find(
       (r) =>
@@ -54,8 +57,8 @@ function resolveStaffRoleIds(guild, staffRoleNames = []) {
   return [...ids];
 }
 
-function staffMentionLine(guild, staffRoleNames) {
-  const ids = resolveStaffRoleIds(guild, staffRoleNames);
+function staffMentionLine(guild, staffRoleNames, staffRoleIds) {
+  const ids = resolveStaffRoleIds(guild, staffRoleNames, staffRoleIds);
   if (!ids.length) return "";
   return ids.map((id) => `<@&${id}>`).join(" ");
 }
@@ -107,7 +110,11 @@ export function buildTicketPanelPayload(config) {
   return { embeds: [embed], components: [row] };
 }
 
-function findPanelChannel(guild, panelChannelName) {
+function findPanelChannel(guild, panelChannelName, panelChannelId) {
+  if (panelChannelId) {
+    const byId = guild.channels.cache.get(panelChannelId);
+    if (byId?.isTextBased?.()) return byId;
+  }
   const slug = (panelChannelName || "create-ticket").toLowerCase();
   return guild.channels.cache.find(
     (c) =>
@@ -145,7 +152,7 @@ export async function ensureTicketPanel(channel, client, config, { forceNew = fa
 
 export async function deployTicketPanelForGuild(guild, client, config, { forceNew = false } = {}) {
   if (!config?.enabled) return false;
-  const channel = findPanelChannel(guild, config.panelChannel);
+  const channel = findPanelChannel(guild, config.panelChannel, config.panelChannelId);
   if (!channel) return false;
   await ensureTicketPanel(channel, client, config, { forceNew });
   return true;
@@ -174,12 +181,26 @@ async function createTicketChannel(guild, member, nearChannel, config, categoryI
     if (existing) return { channel: existing, alreadyOpen: true, category };
     delete state.open[openKey];
   }
+  // State file may be gone (redeploy): find the ticket from its channel topic instead.
+  const marker = `uid:${member.id} cat:${category.id}`;
+  const found = guild.channels.cache.find((c) => c.type === ChannelType.GuildText && c.topic?.includes(marker));
+  if (found) {
+    state.open[openKey] = found.id;
+    saveTicketState(guild.id, state);
+    return { channel: found, alreadyOpen: true, category };
+  }
+  if (!state.counter) {
+    for (const c of guild.channels.cache.values()) {
+      const m = /^ticket-.*?-(\d{4,})-/.exec(c.name || "");
+      if (m) state.counter = Math.max(state.counter, Number(m[1]));
+    }
+  }
 
   state.counter += 1;
   const num = String(state.counter).padStart(4, "0");
   const slug = sanitizeSlug(member.user);
   const parent = await findTicketParent(guild, nearChannel);
-  const staffIds = resolveStaffRoleIds(guild, config.staffRoles);
+  const staffIds = resolveStaffRoleIds(guild, config.staffRoles, config.staffRoleIds);
 
   const overwrites = [
     { id: guild.roles.everyone.id, deny: [PermissionFlagsBits.ViewChannel] },
@@ -221,7 +242,7 @@ async function createTicketChannel(guild, member, nearChannel, config, categoryI
     name: channelName,
     type: ChannelType.GuildText,
     parent: parent?.id,
-    topic: `[${category.label}] Ticket #${num} — ${member.user.tag}`,
+    topic: `[${category.label}] Ticket #${num} — ${member.user.tag} · ${marker}`,
     permissionOverwrites: overwrites,
     reason: `Ticket ${num} (${category.label}) for ${member.user.tag}`
   });
@@ -229,7 +250,7 @@ async function createTicketChannel(guild, member, nearChannel, config, categoryI
   state.open[openKey] = ticketChannel.id;
   saveTicketState(guild.id, state);
 
-  const pings = staffMentionLine(guild, config.staffRoles);
+  const pings = staffMentionLine(guild, config.staffRoles, config.staffRoleIds);
   const closeRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId(CLOSE_ID).setLabel("Close Ticket").setStyle(ButtonStyle.Danger)
   );
@@ -266,7 +287,8 @@ async function closeTicketChannel(channel, interaction) {
   }
   saveTicketState(guild.id, state);
 
-  const staffIds = resolveStaffRoleIds(guild, getTicketConfig(guild.id)?.staffRoles || []);
+  const tcfg = getTicketConfig(guild.id) || {};
+  const staffIds = resolveStaffRoleIds(guild, tcfg.staffRoles || [], tcfg.staffRoleIds || []);
   const isStaff =
     interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels) ||
     staffIds.some((id) => interaction.member?.roles?.cache?.has(id));
@@ -307,6 +329,12 @@ export async function handleTicketInteraction(interaction, client) {
         ephemeral: true,
         content: "Tickets are not configured on this server. Server owner: run `/setup run` or `/setup ticket-panel`."
       });
+      return true;
+    }
+
+    const access = ticketAccess(interaction.guild);
+    if (!access.allowed) {
+      await interaction.reply({ ephemeral: true, content: ticketDeniedMessage(access) });
       return true;
     }
 
