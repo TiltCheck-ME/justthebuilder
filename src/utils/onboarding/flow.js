@@ -50,7 +50,7 @@ export async function startOnboarding(user, guild, client) {
       `_${TAGLINE}_`,
       '',
       'Tap **Start Setup** for the AI interview in DMs, or run **`/setup run`** in your server.',
-      'Free: layout skeleton. $0.99: roles, embeds, pins & tickets.',
+      'Free: layout skeleton. $1: roles, embeds, pins & tickets.',
       '',
       buildInstallHelpHint()
     ].join('\n'),
@@ -245,7 +245,7 @@ export async function handlePostBuildButtons(interaction, client) {
         await applyBlueprint(guild, latest, { ownerUser: user, mode: 'structure' });
         await interaction.followUp({
           ephemeral: true,
-          content: '✅ Applied free structure only. Buy the Basic Build Pack ($0.99) and run `/setup unlock` for roles, embeds, and tickets.'
+          content: '✅ Applied free structure only. Buy the Basic Build Pack ($1) and run `/setup unlock` for roles, embeds, and tickets.'
         });
       }
     } catch (err) { log(`Reapply failed: ${err.message}`); }

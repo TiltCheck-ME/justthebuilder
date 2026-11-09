@@ -60,7 +60,7 @@ function buildIntroEmbed(customMessage) {
         customMessage ? `📢 ${customMessage}\n` : "",
         `💬 **Questions?** ${invite}`,
         "",
-        "_Basic Build Pack $0.99 — see the bot profile._"
+        "_Basic Build Pack $1 — see the bot profile._"
       ]
         .filter((line) => line !== undefined)
         .join("\n")

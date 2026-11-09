@@ -85,8 +85,8 @@ export function buildGrantFreeBuildOwnerDm({
  */
 export function buildUnlockDeniedMessage() {
   return [
-    "🔒 **Launch-ready setup needs an unlock ($0.99).**",
-    `• [Basic — $0.99](${KOFI_BASIC_SHOP_URL}) → \`/setup redeem\` → \`/setup unlock\``,
+    "🔒 **Launch-ready setup needs an unlock ($1).**",
+    `• [Basic — $1](${KOFI_BASIC_SHOP_URL}) → \`/setup redeem\` → \`/setup unlock\``,
     "• Or buy from the bot profile → `/setup unlock`",
     "• Got a comp from support? Run **`/setup unlock`** after we grant your server",
     "",

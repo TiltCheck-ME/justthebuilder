@@ -64,7 +64,7 @@ export async function redeemKofiCode(interaction) {
       "1. Run `/setup run` if you haven't finished the interview",
       "2. Run `/setup unlock` to apply roles, embeds, pins & tickets",
       "",
-      "_Free: AI designs your server. $0.99: we build it._"
+      "_Free: AI designs your server. $1: we build it._"
     ].join("\n")
   };
 }

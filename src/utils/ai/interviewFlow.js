@@ -174,7 +174,7 @@ export async function runInterview(user, guild, client, preset = null, isPremium
         lastPreset: presetId
       });
       await dm.send(
-        "✅ Blueprint ready. Choose **Apply free structure** or **Unlock full setup — $0.99** next."
+        "✅ Blueprint ready. Choose **Apply free structure** or **Unlock full setup — $1** next."
       );
       return { ok: true, blueprint };
     } catch (err) {
@@ -329,7 +329,7 @@ export async function runInterview(user, guild, client, preset = null, isPremium
       await user.send(
         owner
           ? `⚠️ Free layout preview is capped at ${FREE_LIMIT} channels. As bot owner you can **Unlock full setup** next at no charge (full polish + no channel cap).`
-          : `⚠️ Free structure capped at ${FREE_LIMIT} channels. Unlock ($0.99) for polish on this layout.`
+          : `⚠️ Free structure capped at ${FREE_LIMIT} channels. Unlock ($1) for polish on this layout.`
       );
     }
   }
@@ -406,7 +406,7 @@ export async function runInterview(user, guild, client, preset = null, isPremium
   await user.send(
     ownerDone
       ? "✅ Interview complete! Blueprint saved.\nNext: press **Unlock full setup** (free for bot owner) or **Apply free structure** for the skeleton only."
-      : "✅ Interview complete! Your blueprint is saved.\nChoose **Apply free structure** or **Unlock full setup — $0.99** next."
+      : "✅ Interview complete! Your blueprint is saved.\nChoose **Apply free structure** or **Unlock full setup — $1** next."
   );
   return { ok: true, blueprint };
 }
