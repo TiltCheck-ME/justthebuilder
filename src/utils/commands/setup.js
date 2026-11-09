@@ -180,7 +180,7 @@ async function wipeServer(guild) {
 }
 
 /**
- * DM the freemium paywall summary + Apply free structure / Unlock full ($0.99) buttons
+ * DM the freemium paywall summary + Apply free structure / Unlock full ($1) buttons
  * after an interview (or onboarding preview) completes. Guild id is embedded in each
  * button customId so DM clicks work after a bot restart.
  * @param {import('discord.js').User} user
@@ -211,7 +211,7 @@ export async function sendFreemiumPaywall(user, guild) {
             `_${TAGLINE}_`,
             "",
             "✅ **Free:** AI interview + category & channel layout (skeleton)",
-            "🔒 **$0.99:** roles, permissions, embeds, pins & tickets — launch-ready",
+            "🔒 **$1:** roles, permissions, embeds, pins & tickets — launch-ready",
             "",
             `[Buy on Ko-fi](${KOFI_BASIC_SHOP_URL}) or bot profile → \`/setup redeem\` → \`/setup unlock\``,
             "Your answers are saved — no re-interview needed.",
@@ -226,7 +226,7 @@ export async function sendFreemiumPaywall(user, guild) {
       .setStyle(ButtonStyle.Success),
     new ButtonBuilder()
       .setCustomId(`jtb_unlock_polish:${guild.id}`)
-      .setLabel(ownerFree ? "Unlock full setup (free)" : "Unlock full setup — $0.99")
+      .setLabel(ownerFree ? "Unlock full setup (free)" : "Unlock full setup — $1")
       .setStyle(ButtonStyle.Primary)
   );
 
@@ -555,7 +555,7 @@ export async function handleSetupInteraction(interaction, client) {
     if (!access.allowed && !polished && !isBotOwner(interaction.user.id)) {
       return interaction.reply({
         ephemeral: true,
-        content: "💎 That command needs a completed full unlock ($0.99 pack) on this server.",
+        content: "💎 That command needs a completed full unlock ($1 pack) on this server.",
       });
     }
 
@@ -697,7 +697,7 @@ export async function handleSetupInteraction(interaction, client) {
     if (!access.allowed && !polished && !isBotOwner(interaction.user.id)) {
       return interaction.reply({
         ephemeral: true,
-        content: "💎 That command needs a completed full unlock ($0.99 pack) on this server.",
+        content: "💎 That command needs a completed full unlock ($1 pack) on this server.",
       });
     }
 

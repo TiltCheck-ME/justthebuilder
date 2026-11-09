@@ -1,6 +1,6 @@
 /** Shared product copy — keep in sync across site, bot DMs, and paywalls. */
 
-export const TAGLINE = "Free: AI designs your server. $0.99: we build it.";
+export const TAGLINE = "Free: AI designs your server. $1: we build it.";
 
 export const KOFI_BASIC_SHOP_URL = "https://ko-fi.com/s/2c6f47f1fc";
 
@@ -15,10 +15,10 @@ export const STRUCTURE_UPSELL = [
   "",
   "Notice **#rules** and **#welcome** are still empty?",
   "",
-  "✨ **Unlock for $0.99** posts your AI-written embeds, roles, permissions, pins & tickets.",
+  "✨ **Unlock for $1** posts your AI-written embeds, roles, permissions, pins & tickets, plus 3 months of ticket support.",
   "Your interview is saved — run **`/setup unlock`** (or redeem on [Ko-fi](" + KOFI_BASIC_SHOP_URL + ") first).",
   "",
-  "_Free: AI designs your server. $0.99: we build it._"
+  "_Free: AI designs your server. $1: we build it._"
 ].join("\n");
 
 /** Discord OAuth invite for the companion bot (set JUSTTHEHELPER_CLIENT_ID or JUSTTHEHELPER_INVITE_URL). */

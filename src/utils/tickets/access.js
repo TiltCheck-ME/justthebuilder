@@ -17,7 +17,7 @@ export function ticketSupportUntil(guildId) {
 }
 
 /**
- * Tickets are included for 3 months with the $0.99 unlock.
+ * Tickets are included for 3 months with the $1 unlock.
  * The bot owner's own servers are always on.
  */
 export function ticketAccess(guild) {
@@ -27,7 +27,7 @@ export function ticketAccess(guild) {
   return { allowed: false, reason: until ? "expired" : "none", until };
 }
 
-/** Start (or extend) 3 months of ticket support, e.g. on a $0.99 unlock. */
+/** Start (or extend) 3 months of ticket support, e.g. on a $1 unlock. */
 export function grantTicketSupport(guildId, days = TICKET_SUPPORT_DAYS) {
   const cfg = loadGuildConfig(guildId);
   const current = cfg.ticketsUntil ? Date.parse(cfg.ticketsUntil) : 0;
@@ -40,5 +40,5 @@ export function grantTicketSupport(guildId, days = TICKET_SUPPORT_DAYS) {
 export function ticketDeniedMessage(access) {
   return access.reason === "expired"
     ? "🎟️ Ticket support on this server ran out. Server owner: a monthly support plan is coming soon."
-    : "🎟️ Tickets come with the $0.99 full unlock (3 months included). Server owner: run `/setup unlock`.";
+    : "🎟️ Tickets come with the $1 full unlock (3 months included). Server owner: run `/setup unlock`.";
 }
