@@ -79,7 +79,7 @@ const grantCommandBuilder = new SlashCommandBuilder()
       .addSubcommand((sub) =>
         sub
           .setName("shop-create-helper")
-          .setDescription("Create JustTheHelper Guild Pass shop item ($1.99)")
+          .setDescription("Create JustTheHelper Guild Pass shop item ($2.99)")
       )
   )
   ;

@@ -1,6 +1,6 @@
 /** Shared product copy — keep in sync across site, bot DMs, and paywalls. */
 
-export const TAGLINE = "Free: AI designs your server. $1: we build it.";
+export const TAGLINE = "Free: AI designs your server. $4.99: we build it.";
 
 export const KOFI_BASIC_SHOP_URL = "https://ko-fi.com/s/2c6f47f1fc";
 
@@ -15,10 +15,10 @@ export const STRUCTURE_UPSELL = [
   "",
   "Notice **#rules** and **#welcome** are still empty?",
   "",
-  "✨ **Unlock for $1** posts your AI-written embeds, roles, permissions, pins & tickets, plus 3 months of ticket support.",
+  "✨ **Unlock for $4.99** posts your AI-written embeds, roles, permissions, pins & tickets, plus 3 months of ticket support.",
   "Your interview is saved — run **`/setup unlock`** (or redeem on [Ko-fi](" + KOFI_BASIC_SHOP_URL + ") first).",
   "",
-  "_Free: AI designs your server. $1: we build it._"
+  "_Free: AI designs your server. $4.99: we build it._"
 ].join("\n");
 
 /** Discord OAuth invite for the companion bot (set JUSTTHEHELPER_CLIENT_ID or JUSTTHEHELPER_INVITE_URL). */
@@ -49,7 +49,7 @@ export function justTheHelperUpsell({ variant = "polish" } = {}) {
       "",
       "───",
       "🎫 **Growing your community?**",
-      `${name} — free **welcome + verify** and **/remind**; **$1.99/mo** unlocks private-thread **support tickets** (claim, close, staff flow).`,
+      `${name} — free **welcome + verify** and **/remind**; **$2.99/mo** unlocks private-thread **support tickets** (claim, close, staff flow).`,
       "Add it to this server, then run `/welcome post` to get started."
     ].join("\n");
   }
@@ -60,7 +60,7 @@ export function justTheHelperUpsell({ variant = "polish" } = {}) {
     "🎫 **Level up member support**",
     `${name} pairs well with your new server:`,
     "• **Free:** welcome + verify button, personal `/remind`",
-    "• **$1.99/mo (guild):** private-thread ticket panel — open → claim → close",
+    "• **$2.99/mo (guild):** private-thread ticket panel — open → claim → close",
     "",
     "_JustTheBuilder built the layout; JustTheHelper runs day-to-day support._"
   ].join("\n");
